@@ -2,26 +2,21 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Client;
 use App\Models\File;
+use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 
 class FileController extends Controller
 {
     /**
-     * Display a listing of the resource.
+     * Display the specified resource.
      */
-    public function index()
+    public function index(Client $client)
     {
-        //
-    }
-
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
-    {
-        //
+        $clients = Client::all();
+        return view('admin.files.index', compact('client', 'clients'));
     }
 
     /**
@@ -31,7 +26,7 @@ class FileController extends Controller
     {
         $request->validate([
             'name_file' => 'required'
-        ],[
+        ], [
             'name_file.required' => 'Nome del file obbligatorio'
         ]);
 
@@ -44,38 +39,57 @@ class FileController extends Controller
         }
         $file->save();
 
-
-        return back();
+        return back()->with('success', 'Il file è stato correttamente allegato al cliente');
     }
 
-    /**
-     * Display the specified resource.
-     */
-    public function show(File $file)
+
+    public function destroy(Client $client, File $file)
     {
-        //
+
+        // mi assicuro che il file appartenga al cliente
+        if ($client->id !== $file->client_id) {
+            abort(403, 'Azione non autorizzata');
+        }
+
+        if ($file->url_file) {
+            Storage::delete($file->url_file);
+            $file->url_file = null;
+            $file->save();
+        }
+        $file->delete();
+
+        return back()->with('success', 'File eliminato con successo');
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(File $file)
+    public function delete_Allfile(Client $client)
     {
-        //
+        try {
+            foreach ($client->files as $file) {
+
+                if ($file->url_file) {
+                    Storage::delete($file->url_file);
+                    $file->url_file = null;
+                    $file->save();
+                }
+
+                $file->delete();
+            }
+
+            return back()->with('success', 'File eliminati con successo');
+        } catch (Exception $e) {
+            return back()->with('error', $e->getMessage());
+        }
     }
 
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, File $file)
+    public function downloadFile(Client $client, File $file)
     {
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(File $file)
-    {
-        //
+        try {
+            if ($client->id == $file->client_id && $file->id) {
+                $filePath = public_path('storage/' . $file->url_file);
+            }
+            return response()->download($filePath, '');
+        } catch (Exception $e) {
+            return back()->with('error', $e->getMessage());
+        }
     }
 }

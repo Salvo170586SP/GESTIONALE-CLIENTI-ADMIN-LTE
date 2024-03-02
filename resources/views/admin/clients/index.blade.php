@@ -44,7 +44,7 @@
                         </div>
                         <div class="modal-body m-0 p-0">
                             @include('admin.partials.errors')
-                            <form action="{{ route('admin.clients.store') }}" method="POST" id="form">
+                            <form action="{{ route('admin.clients.store') }}" method="POST" id="form" enctype="multipart/form-data">
                                 @csrf
 
                                 <div class="p-3">
@@ -69,13 +69,6 @@
     <div class="row">
         <div class="col-12">
             <div id="example1_wrapper" class="dataTables_wrapper dt-bootstrap4">
-                {{-- <div class="row">
-                    <div class="col-sm-12 col-md-6">
-                        <div id="example1_filter" class="dataTables_filter"><label>Search:<input type="search"
-                                    class="form-control form-control-sm" placeholder=""
-                                    aria-controls="example1"></label></div>
-                    </div>
-                </div> --}}
                 <div class="row">
                     <div class="col-12">
                         <div style="height: 15px; margin: 8px 0">
@@ -131,9 +124,7 @@
                                     <th class="sorting" tabindex="0" aria-controls="example1" rowspan="1" colspan="1">
                                         Cap</th>
                                     <th class="sorting" tabindex="0" aria-controls="example1" rowspan="1" colspan="1">
-                                    </th>
-                                    <th class="sorting" tabindex="0" aria-controls="example1" rowspan="1" colspan="1">
-                                    </th>
+                                    </th>                             
                                     <th class="sorting" tabindex="0" aria-controls="example1" rowspan="1" colspan="1">
                                     </th>
                                 </tr>
@@ -160,82 +151,18 @@
                                         {{ $client->cap ?? '-' }}
                                     </td>
                                     <td>
+                                        <a href="{{ route('admin.files.index', $client->id) }}"
+                                            class="btn btn-info text-sm flex justify-content-center align-items-center">
+                                            <span class="mr-2">allega file</span>
+                                            <i class="fa-solid fa-plus"></i>
+                                        </a>
+                                    </td>
+                                    <td>
                                         <a class="d-flex align-items-center justify-content-between btn btn-secondary"
                                             href="{{ route('admin.notes.index', $client->id) }}">
                                             <span class="text-sm">crea appunti</span>
                                             <i class="fa-solid fa-list ml-2"></i>
                                         </a>
-                                    </td>
-                                    <td class="d-flex align-items-center justify-content-center">
-                                        <button type="button" class="btn btn-primary d-flex align-items-center"
-                                            data-toggle="modal" data-target="#allegafile{{$client->id}}">
-                                            <span class="mr-2 text-sm">allega file</span>
-                                            <i class="fa-solid fa-plus"></i>
-                                        </button>
-
-                                        <!-- Modal -->
-                                        <div class="modal fade" id="allegafile{{$client->id}}" tabindex="-1"
-                                            aria-labelledby="exampleModalLabel" aria-hidden="true">
-                                            <div class="modal-dialog">
-                                                <div class="modal-content">
-                                                    <div class="modal-header">
-                                                        <div class="d-flex align-items-center">
-                                                            <i class="fa-solid fa-plus fa-2x mr-3"></i>
-                                                            <h5 class="modal-title" id="exampleModalLabel">Allega file a
-                                                                {{ $client->name_client }} {{ $client->surname_client }}
-                                                            </h5>
-                                                        </div>
-                                                        <button type="button" class="close" data-dismiss="modal"
-                                                            aria-label="Close">
-                                                            <span aria-hidden="true">&times;</span>
-                                                        </button>
-                                                    </div>
-                                                    <div class="modal-body m-0 p-0">
-                                                        <form action="{{route('admin.files.store')}}" method="POST"
-                                                            enctype="multipart/form-data">
-                                                            @csrf
-                                                            <div class="p-3">
-                                                                @include('admin.partials.errors')
-                                                                <input type="hidden" name="client_id"
-                                                                    value="{{ $client->id }}" />
-                                                                <div
-                                                                    class="d-flex flex-column justify-content-between my-3">
-                                                                    <div id="fileInput">
-                                                                        <div class="mb-2">
-                                                                            <label for="url_file" class="mb-1">
-                                                                                File
-                                                                            </label>
-                                                                            <input type="file" name="url_file"
-                                                                                id="url_file"
-                                                                                class="form-control-file border-0" />
-                                                                        </div>
-                                                                    </div>
-                                                                    <div style="display: none" id="fileName">
-                                                                        <div class="mb-3">
-                                                                            <label for="name_file" class="mb-1">
-                                                                                Nome del file
-                                                                            </label>
-                                                                            <small>(*) campo obbligatorio</small>
-                                                                            <input type="text" name="name_file"
-                                                                                id="name_file" class="form-control" />
-                                                                            @error('name_file')
-                                                                            <div class="text-danger">{{ $message }}
-                                                                            </div>
-                                                                            @enderror
-                                                                        </div>
-                                                                    </div>
-                                                                </div>
-                                                            </div>
-                                                            <div class="modal-footer">
-                                                                <button class="btn btn-primary">allega</button>
-                                                                <button type="button" class="btn btn-light"
-                                                                    data-dismiss="modal">chiudi</button>
-                                                            </div>
-                                                        </form>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
                                     </td>
                                     <td>
                                         <div class="d-flex align-items-center justify-content-center">
@@ -388,18 +315,6 @@
                     hasOpenedDueToError = true;
                 @endif
             });
-</script>
-
-{{-- mostra tag input dopo inserimento immagine --}}
-<script>
-    const urlFile = document.getElementById('url_file');
-        urlFile.addEventListener('input', function (e) {
-        const nameFIle = document.getElementById('fileName');
-        const file = urlFile.value;
-        console.log(file);
-        trueDis = urlFile.disabled = false;
-        nameFIle.style.display = file !== '' ? 'block' : 'none';
-    });
 </script>
 
 <script>

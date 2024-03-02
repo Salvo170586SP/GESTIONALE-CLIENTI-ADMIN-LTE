@@ -45,3 +45,9 @@
         </label>
         <input type="text" name="cap" id="cap" value="{{ old('cap', isset($client) ? $client->cap : '') }}" class="form-control" />
     </div>
+    <div class="mb-4">
+        <label for="file" class="mb-1">
+            Allega immagine profilo
+        </label>
+        <input type="file" name="file_url" id="file" class="form-control" />
+    </div>

@@ -56,6 +56,11 @@
                     <i class="fa-solid fa-list ml-2"></i>
                 </a>
             </div>
+            <div class="col-12">
+                <div style="height: 15px" class="mb-5">
+                    @include('admin.partials.messages')
+                </div>
+            </div>
             <div class="col-md-3">
                 <div class="card card-primary card-outline">
                     <div class="card-body box-profile">
@@ -229,5 +234,11 @@
     .catch(error => {
         console.error(error);
     });
+</script>
+
+<script>
+    setTimeout(function () {
+    document.getElementById('success-alert').style.display = 'none';
+    }, 5000); 
 </script>
 @endsection

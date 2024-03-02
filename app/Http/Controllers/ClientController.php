@@ -27,6 +27,15 @@ class ClientController extends Controller
         return view('admin.clients.index', compact('clients'));
     }
 
+        /**
+     * Display the specified resource.
+     */
+    public function show(Client $client)
+    {
+        $clients = Client::all();
+        return view('admin.clients.show', compact('client', 'clients'));
+    }
+
     /**
      * Store a newly created resource in storage.
      */
@@ -49,21 +58,18 @@ class ClientController extends Controller
             $client->city_of_birth = $request->city_of_birth;
             $client->address = $request->address;
             $client->cap = $request->cap;
+
+            if ($request->hasfile('file_url')) {
+                $url = Storage::put('/image_client', $request->file('file_url'));
+                $client->file_url = $url;
+            }
+
             $client->save();
 
             return back()->with('success', 'Cliente inserito con successo');
         } catch (Exception $e) {
             return back()->with('error', $e->getMessage());
         }
-    }
-
-    /**
-     * Display the specified resource.
-     */
-    public function show(Client $client)
-    {
-        $clients = Client::all();
-        return view('admin.clients.show', compact('client', 'clients'));
     }
 
     /**
@@ -87,7 +93,7 @@ class ClientController extends Controller
                         Storage::delete($client->file_url);
                     }
 
-                    $url = Storage::put('/files_client', $request->file('file_url'));
+                    $url = Storage::put('/image_client', $request->file('file_url'));
                     $client->file_url = $url;
                 }
 
@@ -99,7 +105,6 @@ class ClientController extends Controller
                     'address' => $request->address,
                     'cap' => $request->cap,
                 ]);
-
             }
             return back()->with('success', 'Cliente aggiornato con successo');
         } catch (Exception $e) {
@@ -131,56 +136,6 @@ class ClientController extends Controller
             }
 
             return back()->with('success', 'Cliente eliminato con successo');
-        } catch (Exception $e) {
-            return back()->with('error', $e->getMessage());
-        }
-    }
-
-    public function delete_Allfile(Client $client)
-    {
-        try {
-            foreach ($client->files as $file) {
-
-                if ($file->url_file) {
-                    Storage::delete($file->url_file);
-                    $file->url_file = null;
-                    $file->save();
-                }
-
-                $file->delete();
-            }
-
-            return back()->with('success', 'File eliminati con successo');
-        } catch (Exception $e) {
-            return back()->with('error', $e->getMessage());
-        }
-    }
-
-    public function delete_file(Client $client, File $file)
-    {
-
-        // mi assicuro che il file appartenga al cliente
-        if ($client->id !== $file->client_id) {
-            abort(403, 'Azione non autorizzata');
-        }
-
-        if ($file->url_file) {
-            Storage::delete($file->url_file);
-            $file->url_file = null;
-            $file->save();
-        }
-        $file->delete();
-
-        return back()->with('success', 'File eliminato con successo');
-    }
-
-    public function downloadFile(Client $client, File $file)
-    {
-        try {
-            if ($client->id == $file->client_id && $file->id) {
-                $filePath = public_path('storage/' . $file->url_file);
-            }
-            return response()->download($filePath, '');
         } catch (Exception $e) {
             return back()->with('error', $e->getMessage());
         }

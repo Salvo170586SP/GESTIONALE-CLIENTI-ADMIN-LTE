@@ -117,12 +117,6 @@
         </div>
     </div>
 
-
-
-
-
-
-
     {{-- SCRIPT JS --}}
     <script src="https://cdn.ckeditor.com/ckeditor5/40.1.0/classic/ckeditor.js"></script>    
     <!-- jQuery -->
@@ -161,7 +155,5 @@
     crossorigin="anonymous" referrerpolicy="no-referrer">
     </script>
     @yield('additionalscripts')
-
 </body>
-
 </html>

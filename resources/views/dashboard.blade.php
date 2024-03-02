@@ -22,7 +22,7 @@
                   <div class="icon">
                       <i class="ion ion-person-add"></i>
                   </div>
-                  <a href="{{route('admin.clients.index')}}" class="small-box-footer">Vai alla tua lista <i class="fas fa-arrow-circle-right"></i></a>
+                  <a href="{{route('admin.clients.index')}}" class="small-box-footer">Vai alla tua lista clienti <i class="fas fa-arrow-circle-right"></i></a>
               </div>
           </div>
           <div class="col-3">
@@ -36,6 +36,18 @@
                     <i class="fa-solid fa-note-sticky ml-1 mr-2"></i>
                   </div>
                   <a href="{{route('admin.todos.index')}}" class="small-box-footer">Vai alle tue note <i class="fas fa-arrow-circle-right"></i></a>
+              </div>
+          </div>
+          <div class="col-3">
+              <div class="small-box bg-secondary">
+                  <div class="inner">
+                      <h3>{{count($appointments)}}</h3>
+                      <p>Il tuo calendario</p>
+                  </div>
+                  <div class="icon">
+                    <i class="fa-solid fa-calendar-days ml-1 mr-2"></i>
+                  </div>
+                  <a href="{{route('admin.calendar.index')}}" class="small-box-footer">Vai al tuo calendario <i class="fas fa-arrow-circle-right"></i></a>
               </div>
           </div>
       </div>

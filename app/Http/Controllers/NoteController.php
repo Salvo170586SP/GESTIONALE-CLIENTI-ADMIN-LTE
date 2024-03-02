@@ -20,13 +20,6 @@ class NoteController extends Controller
     }
 
     /**
-     * Show the form for creating a new resource.
-     */
-    public function create(Client $client)
-    {
-    }
-
-    /**
      * Store a newly created resource in storage.
      */
     public function store(Request $request, Client $client)
@@ -40,18 +33,10 @@ class NoteController extends Controller
             $note->client_id = $client->id;
             $note->save();
 
-            return back();
+            return back()->with('success', 'Nota cliente creata con successo');
         } catch (Exception $e) {
             return back()->with('error', $e->getMessage());
         }
-    }
-
-    /**
-     * Display the specified resource.
-     */
-    public function show(Note $note)
-    {
-        //
     }
 
     /**
@@ -81,7 +66,7 @@ class NoteController extends Controller
             return back()->with('error', $e->getMessage());
         }
 
-        return redirect()->route('admin.notes.index', compact('note', 'client'));
+        return redirect()->route('admin.notes.index', compact('note', 'client'))->with('success', 'Nota cliente modificata con successo');
     }
 
     /**
@@ -93,7 +78,7 @@ class NoteController extends Controller
             $note->delete();
         }
 
-        return back();
+        return back()->with('success', 'Nota cliente eliminata con successo');
     }
 
     public function deleteAllNote(Client $client)
@@ -104,6 +89,6 @@ class NoteController extends Controller
             }
         }
 
-        return back();
+        return back()->with('success', 'Note cliente eliminate con successo');
     }
 }

@@ -21,154 +21,117 @@
                     <i class="fa-solid fa-list ml-2"></i>
                 </a>
             </div>
-            <div class="col-md-3">
-                <div class="card card-primary ">
-                    <div class="card-body box-profile">
-                        <h3 class="profile-username text-center mb-4">{{Str::upper($client->name_client)}} {{Str::upper($client->surname_client)}}</h3>
-                        <ul class="list-group list-group-unbordered mb-3">
-                            <li class="list-group-item d-flex justify-content-between">
-                                <span class="text-bold">Data di nascita</span> <span>{{ $client->date_of_birth ?? '-' }}</span>
-                            </li>
-                            <li class="list-group-item d-flex justify-content-between">
-                                <span class="text-bold">Città di nascita</span> <span>{{ $client->city_of_birth ?? '-' }} </span>
-                            </li>
-                            <li class="list-group-item d-flex justify-content-between">
-                                <span class="text-bold">Indirizzo</span> <span>{{ $client->address ?? '-' }} , {{ $client->cap ?? '-' }}</span>
-                            </li>
-                        </ul>
-                    </div>
+            <div class="col-2">
+                <div class="card overflow-hidden d-flex justify-content-center">
+                    @if($client->file_url)
+                    <figure>
+                        <img src="{{asset('storage/' . $client->file_url)}}" 
+                           class="rounded p-0 img-fluid"
+                            alt="img">
+                    </figure>
+                    @else
+                    <figure class="overflow-hidden p-0">
+                        <img src="{{asset('imgs/placeholder.png')}}" 
+                            class="rounded p-0 img-fluid"
+                            alt="img">
+                    </figure>
+                    @endif
+                    <h3 class="profile-username text-center mb-4">{{Str::upper($client->name_client)}}
+                        {{Str::upper($client->surname_client)}}</h3>
                 </div>
             </div>
-            <div class="col-md-9">
-                <div class="card">
-                    <div class="card-body">
-                        <div class="tab-content">
-                            <div class="active tab-pane" id="activity">
-                                <div class="post">
-                                    <div class="row">
-                                        <div class="col-12">
-                                            <div class="d-flex justify-content-between my-3">
-                                                <h3 class="mt-1 mb-2 h3">File allegati</h3>
-                                                @if(count($client->files) > 1)
-                                                <!-- Button trigger modal -->
-                                                <button type="button" class="btn btn-danger d-flex align-items-center" data-toggle="modal" data-target="#deleteAllFile{{$client->id}}">
-                                                    <span class="mr-2">elimina tutti i file</span>
-                                                    <i class="fa-solid fa-trash"></i>
-                                                </button>
+            <div class="col-10">
+                <div class="card card-primary ">
+                    <div class="card-body box-profile">
+                        <div class="d-flex justify-content-between align-items-center mb-3">
 
-                                                <!-- Modal -->
-                                                <div class="modal fade" id="deleteAllFile{{$client->id}}" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-                                                    <div class="modal-dialog">
-                                                        <div class="modal-content">
-                                                            <div class="modal-header">
-                                                                <div class="d-flex align-items-center">
-                                                                    <i class="fa-solid fa-circle-exclamation fa-2x mr-3"></i>
-                                                                    <h5 class="modal-title" id="exampleModalLabel">Attenzione</h5>
-                                                                </div>
-                                                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                                                    <span aria-hidden="true">&times;</span>
-                                                                </button>
-                                                            </div>
-                                                            <div class="modal-body  m-0 p-0">
-                                                                <form action="{{ route('admin.clients.delete_Allfile', $client->id) }}" method="post">
-                                                                    @csrf
-                                                                    @method('delete')
-                                                                    <p class="p-3">Sei sicuro di voler eliminare tutti gli allegati?</p>
-                                                                    <div class="modal-footer">
-                                                                        <button class="btn btn-danger">
-                                                                            elimina tutti
-                                                                        </button>
-                                                                        <button type="button" class="btn btn-light" data-dismiss="modal">chiudi</button>
-                                                                    </div>
-                                                                </form>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                                @endif
+                            <button type="button" class="btn btn-primary d-flex align-items-center mx-2"
+                                data-toggle="modal" data-target="#editClient{{$client->id}}">
+                                <span class="mr-2 text-sm">modifica</span>
+                                <i class="fa-solid fa-edit"></i>
+                            </button>
+
+                            <!-- Modal -->
+                            <div class="modal fade" id="editClient{{$client->id}}" tabindex="-1"
+                                aria-labelledby="exampleModalLabel" aria-hidden="true">
+                                <div class="modal-dialog">
+                                    <div class="modal-content">
+                                        <div class="modal-header">
+                                            <div class="d-flex align-items-center">
+                                                <i class="fa-solid fa-edit fa-2x mr-3"></i>
+                                                <h5 class="modal-title" id="exampleModalLabel">Modifica
+                                                    di {{ $client->name_client }} {{
+                                                    $client->surname_client }}</h5>
                                             </div>
+                                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                <span aria-hidden="true">&times;</span>
+                                            </button>
                                         </div>
-                                        <div class="col-sm-12">
-                                            @if(count($client->files) > 0)
-                                            <table id="example1" class="table table-bordered table-striped dataTable dtr-inline" aria-describedby="example1_info">
-                                                <thead>
-                                                    <tr>
-
-                                                        <th class="sorting" tabindex="0" aria-controls="example1" rowspan="1" colspan="1">Nome file</th>
-                                                        <th class="sorting" tabindex="0" aria-controls="example1" rowspan="1" colspan="1"></th>
-                                                    </tr>
-                                                </thead>
-                                                <tbody>
-                                                    @foreach($client->files as $file)
-                                                    <tr>
-                                                        <td>
-                                                            <div class="d-flex justify-content-start align-items-center ml-2">
-                                                                <i class="fa fa-solid fa-file fa-2x"></i>
-                                                                <span class="ml-2">{{ $file->name_file }}</span>
-                                                            </div>
-                                                        </td>
-
-                                                        <td>
-                                                            <div class="d-flex ">
-                                                                <form action="{{ route('admin.clients.downloadFile', [$client->id, $file->id]) }}" method="get" class="mr-2">
-                                                                    @csrf
-                                                                    <button title="scarica file" class="btn btn-secondary flex items-center">
-                                                                        <i class="fa-solid fa-download"></i>
-                                                                    </button>
-                                                                </form>
-                                                                <!-- Button trigger modal delete -->
-                                                                <button type="button" class="btn btn-danger mr-2" data-toggle="modal" data-target="#deleteFile{{$file->id}}">
-                                                                    <i class="fa-solid fa-trash"></i>
-                                                                </button>
-                                                                <!-- Modal -->
-                                                                <div class="modal fade" id="deleteFile{{$file->id}}" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-                                                                    <div class="modal-dialog">
-                                                                        <div class="modal-content">
-                                                                            <div class="modal-header">
-                                                                                <div class="d-flex align-items-center">
-                                                                                    <i class="fa-solid fa-circle-exclamation fa-2x mr-3"></i>
-                                                                                    <h5 class="modal-title" id="exampleModalLabel">Attenzione</h5>
-                                                                                </div>
-                                                                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                                                                    <span aria-hidden="true">&times;</span>
-                                                                                </button>
-                                                                            </div>
-                                                                            <div class="modal-body m-0 p-0">
-                                                                                <form action="{{ route('admin.clients.delete_file', [$client->id, $file->id]) }}" method="post">
-                                                                                    @csrf
-                                                                                    @method('delete')
-                                                                                    <p class="p-3">Sei sicuro di voler eliminare {{ $file->name_file }}?</p>
-                                                                                    <div class="modal-footer">
-                                                                                        <button class="btn btn-danger text-sm">
-                                                                                            elimina
-                                                                                        </button>
-                                                                                        <button type="button" class="btn btn-light" data-dismiss="modal">chiudi</button>
-                                                                                    </div>
-                                                                                </form>
-                                                                            </div>
-                                                                        </div>
-                                                                    </div>
-                                                                </div>
-                                                            </div>
-                                                        </td>
-                                                    </tr>
-                                                    @endforeach
-                                                </tbody>
-                                            </table>
-                                            @else
-                                            <div class="text-center">
-                                                <span>NON CI SONO FILE</span>
-                                            </div>
-                                            @endif
+                                        <div class="modal-body m-0 p-0">
+                                            <form action="{{ route('admin.clients.update', $client->id) }}"
+                                                method="POST" enctype="multipart/form-data">
+                                                @csrf
+                                                @method('put')
+                                                <div class="p-3">
+                                                    @include('admin.clients.form')
+                                                </div>
+                                                <div class="modal-footer">
+                                                    <button class="btn btn-primary">
+                                                        aggiorna
+                                                    </button>
+                                                    <button type="button" class="btn btn-light"
+                                                        data-dismiss="modal">chiudi</button>
+                                                </div>
+                                            </form>
                                         </div>
                                     </div>
                                 </div>
                             </div>
                         </div>
+
+
+                        <ul class="list-group list-group-unbordered mb-3">
+                            <li class="list-group-item d-flex justify-content-between">
+                                <span class="text-bold">Data di nascita</span> <span>{{ $client->date_of_birth ?? '-'
+                                    }}</span>
+                            </li>
+                            <li class="list-group-item d-flex justify-content-between">
+                                <span class="text-bold">Città di nascita</span> <span>{{ $client->city_of_birth ?? '-'
+                                    }} </span>
+                            </li>
+                            <li class="list-group-item d-flex justify-content-between">
+                                <span class="text-bold">Indirizzo</span> <span>{{ $client->address ?? '-' }} </span>
+                            </li>
+                            <li class="list-group-item d-flex justify-content-between">
+                                <span class="text-bold">CAP</span> <span>{{ $client->cap ?? '-' }} </span>
+                            </li>
+                            <li class="list-group-item d-flex justify-content-between">
+                                <span class="text-bold">File allegati</span> <span>{{ count($client->files) }} </span>
+                            </li>
+                            <li class="list-group-item d-flex justify-content-between">
+                                <span class="text-bold">Appunti</span> <span>{{ count($client->notes) }} </span>
+                            </li>
+                        </ul>
                     </div>
                 </div>
             </div>
+
         </div>
     </div>
 </section>
+@endsection
+
+@section('additionalscripts')
+
+{{-- mostra tag input dopo inserimento immagine --}}
+<script>
+    const urlFile = document.getElementById('url_file');
+    urlFile.addEventListener('input', function (e) {
+        const nameFIle = document.getElementById('fileName');
+        const file = urlFile.value;
+        console.log(file);
+        trueDis = urlFile.disabled = false;
+        nameFIle.style.display = file !== '' ? 'block' : 'none';
+    });
+</script>
 @endsection
